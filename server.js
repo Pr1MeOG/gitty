@@ -1,7 +1,7 @@
 const fs = require("fs");
 const { execSync } = require("child_process");
 
-const BRANCH = "main"; // change to "master" if your repo uses master
+const BRANCH = "master"; // change to "master" if your repo uses master
 const INTERVAL = 5 * 60 * 1000; // 5 minutes
 
 function makeCommit() {
