@@ -1,49 +1,55 @@
 const fs = require("fs");
 const { execSync } = require("child_process");
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
 
-const app = express();
+const BRANCH = "main"; // change to "master" if your repo uses master
+const INTERVAL = 5 * 60 * 1000; // 5 minutes
 
-app.use(cors());
-app.use(express.json());
-app.use(bodyParser.json());
+function makeCommit() {
+  try {
+    console.log("\n========================================");
+    console.log("Starting automatic commit...");
+    console.log("Time:", new Date().toLocaleString());
 
-app.get("/commit", (req, res) => {
-  console.log(
-    "=====================================Got a new commit========================================="
-  );
+    const rand = Math.floor(Math.random() * 100000);
 
-  var rand = Math.random();
-  rand = Math.round(rand * 1000 + 1);
-  var str = `This is ${rand} line`;
+    fs.writeFileSync(
+      "data.txt",
+      `This is auto-generated line ${rand}\nTimestamp: ${new Date().toISOString()}`,
+      "utf8"
+    );
 
-  setTimeout(() => {
-    fs.writeFileSync("data.txt", str, "utf8");
-  }, 100);
+    console.log("Updated data.txt");
 
-  setTimeout(() => {
-    execSync(`git add .`);
-    console.log("Files added to staging area!");
-  }, 500);
+    execSync("git add .", { stdio: "inherit" });
 
-  setTimeout(() => {
-    var result = execSync(`git commit -m "this is ${rand}th commit`);
-    console.log(result.toString());
-    console.log("Files commited to local repo.");
-  }, 1500);
+    try {
+      execSync(
+        `git commit -m "Auto commit ${rand} - ${new Date().toLocaleString()}"`,
+        { stdio: "inherit" }
+      );
+    } catch {
+      console.log("No changes detected. Skipping commit.");
+      return;
+    }
 
-  setTimeout(() => {
-    var result = execSync(`git push origin master`);
-    console.log(result.toString());
-    console.log("Files pushed to remote repo!");
-  }, 2500);
+    execSync(`git push origin ${BRANCH}`, {
+      stdio: "inherit",
+    });
 
-  setTimeout(() => {
-    res.send("ok");
-    console.log("sending back resposne...");
-  }, 8000);
-});
+    console.log("Successfully pushed to GitHub!");
+  } catch (err) {
+    console.error("Error:", err.message);
+  }
+}
 
-app.listen(8082, () => console.log("server listening on port 8082"));
+console.log("========================================");
+console.log("GitHub Auto Commit Bot Started");
+console.log(`Branch: ${BRANCH}`);
+console.log(`Interval: ${INTERVAL / 1000} seconds`);
+console.log("========================================");
+
+// First commit immediately
+makeCommit();
+
+// Then repeat forever
+setInterval(makeCommit, INTERVAL);
