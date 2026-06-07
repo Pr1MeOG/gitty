@@ -1,0 +1,19 @@
+html{
+    font-family: 'Noto Sans', sans-serif;
+    height: 100vh;
+}
+
+.heading{
+    font-weight: bold;
+    color: white;
+    padding: 0;
+    margin: 0;
+}
+
+.sub-heading{
+    font-weight: bold;
+}
+
+.main-form{
+    margin-top: 200px;
+}
