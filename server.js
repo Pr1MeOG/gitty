@@ -3,11 +3,23 @@ const { execSync } = require("child_process");
 
 const BRANCH = "master";
 
+function getISTTime() {
+  const now = new Date();
+
+  return new Date(
+    now.toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    })
+  );
+}
+
 function makeCommit() {
   try {
+    const istNow = getISTTime();
+
     console.log("\n========================================");
     console.log("Starting automatic commit...");
-    console.log("Time:", new Date().toLocaleString());
+    console.log("IST Time:", istNow.toLocaleString("en-IN"));
 
     const rand = Math.floor(Math.random() * 100000);
 
@@ -15,6 +27,7 @@ function makeCommit() {
       "data.txt",
       `This is auto-generated line ${rand}
 Timestamp: ${new Date().toISOString()}
+IST Time: ${istNow.toLocaleString("en-IN")}
 Random: ${Math.random()}`,
       "utf8"
     );
@@ -25,7 +38,9 @@ Random: ${Math.random()}`,
 
     try {
       execSync(
-        `git commit -m "Auto commit ${rand} - ${new Date().toLocaleString()}"`,
+        `git commit -m "Auto commit ${rand} - ${istNow.toLocaleString(
+          "en-IN"
+        )}"`,
         { stdio: "inherit" }
       );
     } catch {
@@ -47,12 +62,12 @@ Random: ${Math.random()}`,
 }
 
 function getNextInterval() {
-  const now = new Date();
+  const istNow = getISTTime();
 
-  const hour = now.getHours();
-  const minute = now.getMinutes();
+  const hour = istNow.getHours();
+  const minute = istNow.getMinutes();
 
-  // 12:00 AM - 1:29 AM
+  // IST: 12:00 AM -> 1:29 AM
   if (hour === 0 || (hour === 1 && minute < 30)) {
     return 5 * 60 * 1000; // 5 minutes
   }
@@ -73,8 +88,9 @@ function scheduleNextRun() {
 
 console.log("========================================");
 console.log("GitHub Auto Commit Bot Started");
-console.log("12:00 AM - 1:30 AM => Every 5 Minutes");
-console.log("Rest of Day => Every 1 Hour");
+console.log("Timezone: Asia/Kolkata (IST)");
+console.log("12:00 AM - 1:30 AM IST => Every 5 Minutes");
+console.log("Rest of Day IST => Every 1 Hour");
 console.log("========================================");
 
 makeCommit();
