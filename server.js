@@ -67,21 +67,38 @@ function getNextInterval() {
   const hour = istNow.getHours();
   const minute = istNow.getMinutes();
 
-  // IST: 12:00 AM -> 1:29 AM
-  if (hour === 0 || (hour === 1 && minute < 30)) {
-    return 5 * 60 * 1000; // 5 minutes
+  // 12:00 AM - 12:19 AM
+  if (hour === 0 && minute < 20) {
+    return 10 * 60 * 1000;
   }
 
-  // Rest of day
-  return 60 * 60 * 1000; // 1 hour
+  // 12:20 AM - 1:24 AM
+  if (
+    (hour === 0 && minute >= 20) ||
+    (hour === 1 && minute < 25)
+  ) {
+    return 30 * 60 * 1000;
+  }
+
+  // 1:25 AM - 1:29 AM
+  if (hour === 1 && minute >= 25 && minute < 30) {
+    return 1000;
+  }
+
+  // Rest of Day
+  return 30 * 60 * 1000;
 }
 
 function scheduleNextRun() {
   const interval = getNextInterval();
 
-  console.log(
-    `Next commit in ${Math.floor(interval / 60000)} minutes`
-  );
+  if (interval === 1000) {
+    console.log("Next commit in 1 second");
+  } else {
+    console.log(
+      `Next commit in ${Math.floor(interval / 60000)} minutes`
+    );
+  }
 
   setTimeout(makeCommit, interval);
 }
@@ -89,8 +106,10 @@ function scheduleNextRun() {
 console.log("========================================");
 console.log("GitHub Auto Commit Bot Started");
 console.log("Timezone: Asia/Kolkata (IST)");
-console.log("12:00 AM - 1:30 AM IST => Every 5 Minutes");
-console.log("Rest of Day IST => Every 1 Hour");
+console.log("12:00 AM - 12:20 AM => Every 10 Minutes");
+console.log("12:20 AM - 1:25 AM => Every 30 Minutes");
+console.log("1:25 AM - 1:30 AM => Every 1 Second");
+console.log("Rest of Day => Every 30 Minutes");
 console.log("========================================");
 
 makeCommit();
