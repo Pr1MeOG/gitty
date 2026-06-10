@@ -1,4 +1,4 @@
-# Github Commits Booster
+# Gitty Commits Booster
 This Repo is build for increasing the git commits using NodeJs automation.
 One can install this project and run project to increase the number of commits on your github profile
 
@@ -9,8 +9,6 @@ Steps to install Project:
   Now the project is successfully installed.
 
 Now, we have to make a github ssh key pair:
-This tutorial can be used to do that
-https://www.youtube.com/watch?v=WgZIv5HI44o
 
 Steps to Run Node Server at 8082 Port:
 1. Just open command prompt in the project folder.
